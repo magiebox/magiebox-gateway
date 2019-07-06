@@ -7,7 +7,7 @@ void magiegateway::transfer(name from, name to, asset quantity, string memo)
     {
         return;
     }
-    eosio_assert(isMagieCoin(_code, quantity), "I don't want these coins.");
+    eosio_assert(isMagieCoin(quantity.symbol, _code), "I don't want these coins.");
 
     // remove space
     memo.erase(std::remove_if(memo.begin(),
@@ -176,4 +176,21 @@ uint64_t magiegateway::count(bool isEnter)
         });
     }
     return all;
+}
+
+bool magiegateway::isMagieCoin(symbol sb, name issuer)
+{
+    cointype_index cointypes(name("magiesupport"), name("magiesupport").value);
+    auto iterator = cointypes.find(sb.code().raw());
+    if (iterator != cointypes.end() && iterator->symbol == sb)
+        return true;
+    return false;
+}
+bool magiegateway::isGameOwner(name account)
+{
+    gameowner_index gameowners(name("magiesupport"), name("magiesupport").value);
+    auto iterator = gameowners.find(account.value);
+    if (iterator != gameowners.end())
+        return true;
+    return false;
 }

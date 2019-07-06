@@ -48,6 +48,23 @@ class[[eosio::contract("magiegateway")]] magiegateway : public eosio::contract
     };
     using count_index = eosio::multi_index<"counter"_n, counter>;
     uint64_t count(bool isEnter);
+
+        struct [[eosio::table]] gameowner
+    {
+        name account;
+        uint64_t primary_key() const { return account.value; }
+    };
+    using gameowner_index = eosio::multi_index<"gameowner"_n, gameowner>;
+    bool isGameOwner(name account);
+
+    struct [[eosio::table]] cointype
+    {
+        symbol symbol;
+        name issuer;
+        uint64_t primary_key() const { return symbol.code().raw(); }
+    };
+    using cointype_index = eosio::multi_index<"cointype"_n, cointype>;
+    bool isMagieCoin(symbol sb, name issuer);
 };
 
 #define EOSIO_DISPATCH_CUSTOM( TYPE, MEMBERS ) \
@@ -69,41 +86,6 @@ extern "C" { \
 } \
 
 EOSIO_DISPATCH_CUSTOM( magiegateway, (transfer)(erase) )
-
-bool isMagieCoin(name isser, asset currency)
-{
-    if (isser == name("eosio.token") && currency.symbol == symbol("EOS", 4) && currency.amount >= 950)
-    {
-        return true;
-    }
-    if (isser == name("gamechaineos") && currency.symbol == symbol("GMC", 4) && currency.amount >= 95000)
-    {
-        return true;
-    }
-    if (isser == name("community123") && currency.symbol == symbol("COMC", 4) && currency.amount >= 95000)
-    {
-        return true;
-    }
-    return false;
-}
-
-bool isGameOwner(name account)
-{
-    if (account == name("magiecube111") 
-    || account == name("gamemagiegmc")
-    || account == name("reytheon1111")
-    || account == name("leishendaoyu")
-    || account == name("masterg11111")
-    || account == name("mastergmagir")
-    || account == name("demo"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 
 void SplitString(const string &s, vector<string> &v, const string &c) {
     string::size_type pos1, pos2;
